@@ -18,5 +18,5 @@ public:
 
         // Access kth smallest fraction (0-indexed) and return numerator/denominator
         return {fractions[k - 1].second.first, fractions[k - 1].second.second};
-        }
+    }
 };
