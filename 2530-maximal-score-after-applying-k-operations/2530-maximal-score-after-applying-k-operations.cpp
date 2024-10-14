@@ -26,5 +26,3 @@ auto init = []()
     cout.tie(0);
     return 'c';
 }();
-    }
-};
