@@ -1,5 +1,5 @@
 class Solution:
-    def takeCharacters(self, s: str, k: int) -> int:
+    def takeCharacters(self, s: str, k: int):
         d={c:s.count(c)-k for c in'abc'}
         if min(d.values())<0:return-1
         h,m,l={c:0 for c in'abc'},0,0
