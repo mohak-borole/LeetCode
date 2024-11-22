@@ -1,5 +1,5 @@
 class Solution {
-    public int maxEqualRowsAfterFlips(int[][] matrix) {
+    public int maxEqualRowsAfterFlips(int[][] mat) {
         Map<String, Integer> patFreq = new HashMap<>();
         
         for (int[] row : mat) {
