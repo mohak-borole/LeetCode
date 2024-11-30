@@ -1,53 +1,65 @@
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <list>
-#include <stack>
-#include <algorithm>
-
-using namespace std;
-
+// Hierholzer’s algorithm 
 class Solution {
 public:
-    vector<pair<int, int>> validArrangement(vector<pair<int, int>>& pairs) {
-        // Graph adjacency list and degree tracker
-        unordered_map<int, list<int>> graph;
-        unordered_map<int, int> inOutDeg;
-
-        // Build graph and track in/out degrees
-        for (auto& pair : pairs) {
-            int start = pair.first, end = pair.second;
-            graph[start].push_back(end);
-            inOutDeg[start]++;  // Out-degree
-            inOutDeg[end]--;    // In-degree
+    unordered_map<int, vector<int>> adj;
+    unordered_map<int, int> deg;// net outdegree
+    inline void build_graph(vector<vector<int>>& pairs){
+        for(auto& edge: pairs){
+            int start=edge[0], end=edge[1];
+            adj[start].push_back(end);
+            deg[start]++;
+            deg[end]--;
         }
+    }
 
-        // Find the start node
-        int startNode = pairs[0].first;
-        for (auto& [node, degree] : inOutDeg) {
-            if (degree == 1) {
-                startNode = node;
+    vector<int> rpath;
+    inline void euler(int i){
+        vector<int> stk={i};
+        while(!stk.empty()){
+            i = stk.back();
+            if(adj[i].empty()){
+                rpath.push_back(i);
+                stk.pop_back();
+            } 
+            else {
+                int j=adj[i].back();
+                adj[i].pop_back();
+                stk.push_back(j);
+            }
+        }
+    }
+
+    vector<vector<int>> validArrangement(vector<vector<int>>& pairs) {
+        const int e = pairs.size();
+        adj.reserve(e);
+        deg.reserve(e);
+    
+        build_graph(pairs);
+
+        int i0=deg.begin()->first;
+        //Find start vertex for Euler path 
+        for (auto& [v, d]: deg){
+            if (d == 1){
+                i0=v;
                 break;
-            }
+            } 
         }
 
-        vector<pair<int, int>> path;
+        euler(i0);
 
-        // Hierholzer's algorithm to construct the Eulerian path
-        function<void(int)> dfs = [&](int curr) {
-            auto& neighbors = graph[curr];
-            while (!neighbors.empty()) {
-                int next = neighbors.front();
-                neighbors.pop_front();
-                dfs(next);
-                path.emplace_back(curr, next); // Add edge to path in reverse order
-            }
-        };
+        vector<vector<int>> ans;
+        ans.reserve(e);
 
-        dfs(startNode);
+        for (int i=rpath.size()-2; i>=0; i--) 
+            ans.push_back({rpath[i+1], rpath[i]});
 
-        // Reverse path to get the correct order
-        reverse(path.begin(), path.end());
-        return path;
+        return ans;
     }
 };
+
+auto init = []() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    return 'c';
+}();
